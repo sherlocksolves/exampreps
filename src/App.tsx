@@ -3,6 +3,7 @@ import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { StudyVibeCarousel } from './components/StudyVibeCarousel';
 import { ExamCardsSection } from './components/ExamCardsSection';
+import { ExamSelector } from './components/ExamSelector';
 import { MotivationalSection } from './components/MotivationalSection';
 import { FocusRoom } from './components/FocusRoom';
 import { StudyProgressSection } from './components/StudyProgressSection';
@@ -42,7 +43,7 @@ import { isSupabaseConfigured } from './lib/supabase';
 const STORAGE_KEYS = {
   SESSIONS: 'exam_countdown_sessions_v2',
   JOURNAL: 'exam_countdown_journal_v2',
-  TARGET_EXAM_ID: 'exam_countdown_target_id_v2',
+  TARGET_EXAM_ID: 'exam_countdown_target_id_v3',
   SELECTED_VIBE_ID: 'exam_countdown_selected_vibe_v2',
   STREAK_DAYS: 'exam_countdown_streak_days_v2',
   LAST_STUDIED_DATE: 'exam_countdown_last_studied_date_v2'
@@ -117,8 +118,9 @@ export default function App() {
 
   // User Target Exam selection
   const [targetExamId, setTargetExamId] = useState<string>(() => {
+    // No default exam: first-time visitors choose their own exam.
     const saved = localStorage.getItem(STORAGE_KEYS.TARGET_EXAM_ID);
-    return saved || 'jee-main-2027-s1';
+    return saved || '';
   });
 
   // User Vibe Selection
@@ -237,7 +239,7 @@ export default function App() {
     setJournalEntries(prev => prev.filter(e => e.id !== id));
   };
 
-  const targetExam = exams.find(e => e.id === targetExamId) || exams[0];
+  const targetExam = exams.find(e => e.id === targetExamId) || null;
   const currentVibe = vibes.find(v => v.id === selectedVibeId) || vibes[0];
 
   const totalFocusMinutes = sessions.reduce((acc, s) => acc + s.duration_minutes, 0);
@@ -265,16 +267,23 @@ export default function App() {
         />
 
       <main>
-        {/* SECTION 1: Hero & Next Exam Countdown */}
-        <HeroSection
-          targetExam={targetExam}
-          currentVibe={currentVibe}
-          onStartFocus={() => setFocusRoomOpen(true)}
-          onViewExams={() => {
-            const el = document.getElementById('exams-section');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-        />
+        {/* SECTION 1: First-Visit Exam Selection / Selected Exam Countdown */}
+        {!targetExam ? (
+          <ExamSelector
+            exams={exams}
+            onSelectExam={(id) => setTargetExamId(id)}
+          />
+        ) : (
+          <HeroSection
+            targetExam={targetExam}
+            currentVibe={currentVibe}
+            onStartFocus={() => setFocusRoomOpen(true)}
+            onViewExams={() => {
+              const el = document.getElementById('exams-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+          />
+        )}
 
         {/* SECTION 2: Study Vibe of the Day Carousel */}
         <StudyVibeCarousel
