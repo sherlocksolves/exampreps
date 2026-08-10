@@ -1,0 +1,22 @@
+-- ============================================================================
+-- ADMIN BOOTSTRAP (documentation-only migration — no schema change)
+--
+-- Every table, policy, and function above is fully automated by this
+-- migration system. The ONE thing that genuinely cannot be automated from
+-- SQL alone is creating the very first admin login, because Supabase Auth
+-- passwords are managed by GoTrue, not plain SQL inserts.
+--
+-- One-time manual step (see README.md "Admin Setup"):
+--   1. In the Supabase Dashboard -> Authentication -> Users, click
+--      "Add user" and create an account with your own email + a strong
+--      password (or run `supabase.auth.admin.createUser` from a trusted
+--      server context with your service_role key — never from the browser).
+--   2. Run this SQL once, replacing the email:
+--
+--        update public.profiles set role = 'admin'
+--        where email = 'you@example.com';
+--
+-- That row is the only thing that grants admin rights — see is_admin() and
+-- the RLS policies in the baseline migration. There is no other backdoor.
+-- ============================================================================
+select 1; -- no-op statement so this file is a valid, applyable migration
