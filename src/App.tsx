@@ -130,13 +130,18 @@ export default function App() {
   });
 
   // Streak Days
+  // A new visitor starts at 0. Existing users keep a real streak if they have
+  // a recorded study date; the old hard-coded 6-day placeholder is reset.
   const [streakDays, setStreakDays] = useState<number>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.STREAK_DAYS);
-    return saved ? parseInt(saved, 10) : 6; // default 6 day streak
+    const lastStudied = localStorage.getItem(STORAGE_KEYS.LAST_STUDIED_DATE);
+    if (!lastStudied) return 0;
+    const parsed = saved ? parseInt(saved, 10) : 0;
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
   });
 
-  // Audio State
-  const [activeAudioCategory, setActiveAudioCategory] = useState<AmbientCategory>('rain');
+  // Audio State — Nature/forest is the default ambience.
+  const [activeAudioCategory, setActiveAudioCategory] = useState<AmbientCategory>('forest');
   const [audioVolume, setAudioVolume] = useState<number>(0.5);
   const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
 
@@ -213,12 +218,31 @@ export default function App() {
 
     setSessions(prev => [newSession, ...prev]);
 
-    // Check & update daily streak logic
-    const todayStr = new Date().toISOString().slice(0, 10);
+    // Daily streak logic:
+    // - First completed focus session: 0 → 1
+    // - Same calendar day: no change
+    // - Next consecutive day: +1
+    // - If one or more days were missed: reset to 1
+    const now = new Date();
+    const todayStr = [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, '0'),
+      String(now.getDate()).padStart(2, '0')
+    ].join('-');
     const lastStudied = localStorage.getItem(STORAGE_KEYS.LAST_STUDIED_DATE);
 
     if (lastStudied !== todayStr) {
-      setStreakDays(prev => prev + 1);
+      setStreakDays(prev => {
+        if (!lastStudied) return 1;
+
+        const lastDate = new Date(`${lastStudied}T00:00:00`);
+        const todayDate = new Date(`${todayStr}T00:00:00`);
+        const daysSinceLastStudy = Math.round(
+          (todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        return daysSinceLastStudy === 1 ? prev + 1 : 1;
+      });
       localStorage.setItem(STORAGE_KEYS.LAST_STUDIED_DATE, todayStr);
     }
   };
