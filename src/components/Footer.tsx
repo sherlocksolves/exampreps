@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ExternalLink, Heart, Shield, MessageCircle, Instagram } from 'lucide-react';
+import { Sparkles, ExternalLink, Heart, Shield } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -24,33 +24,6 @@ export const Footer: React.FC = () => {
         <p className="text-xs text-slate-500 max-w-md">
           A cinematic digital study sanctuary engineered for ambitious students striving for rank excellence across national entrance exams.
         </p>
-
-        {/* Contact Us */}
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] font-mono font-bold tracking-widest text-slate-500 uppercase">
-            CONTACT US
-          </span>
-          <div className="flex items-center gap-3">
-            <a
-              href="https://chat.whatsapp.com/LBGnz1tsfPg3EG87QiL5Xg"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Contact us on WhatsApp"
-              className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-400 flex items-center justify-center transition-all duration-300"
-            >
-              <MessageCircle className="w-4.5 h-4.5" />
-            </a>
-            <a
-              href="https://www.instagram.com/viratanand.7"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Follow us on Instagram"
-              className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-pink-500/50 hover:bg-pink-500/10 text-slate-400 hover:text-pink-400 flex items-center justify-center transition-all duration-300"
-            >
-              <Instagram className="w-4.5 h-4.5" />
-            </a>
-          </div>
-        </div>
 
         {/* PeaceGhost Branding Spotlight */}
         <div className="pt-6 border-t border-slate-900 w-full max-w-lg flex flex-col items-center justify-center gap-3">

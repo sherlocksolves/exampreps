@@ -147,7 +147,6 @@ export default function App() {
 
   // Modals & Focus Room
   const [focusRoomOpen, setFocusRoomOpen] = useState<boolean>(false);
-  const [adminPanelOpen, setAdminPanelOpen] = useState<boolean>(false);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(sessions));
@@ -268,6 +267,29 @@ export default function App() {
 
   const totalFocusMinutes = sessions.reduce((acc, s) => acc + s.duration_minutes, 0);
 
+  // The admin dashboard lives on its own hidden path (/admins) and is never
+  // linked from the public site — no button, no icon, nothing to discover.
+  const isAdminRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/admins');
+
+  if (isAdminRoute) {
+    return (
+      <div className="min-h-screen bg-[#050508] text-white font-sans">
+        <AdminPanel
+          isOpen={true}
+          onClose={() => { window.location.href = '/'; }}
+          exams={exams}
+          onSaveExams={setExams}
+          vibes={vibes}
+          onSaveVibes={setVibes}
+          ambientTracks={ambientTracks}
+          onSaveAmbientTracks={setAmbientTracks}
+          quotes={quotes}
+          onSaveQuotes={setQuotes}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#050508] text-white font-sans relative overflow-x-hidden selection:bg-orange-500 selection:text-slate-950">
       
@@ -283,7 +305,6 @@ export default function App() {
           targetExam={targetExam}
           onSelectTargetExam={(id) => setTargetExamId(id)}
           onOpenFocusRoom={() => setFocusRoomOpen(true)}
-          onOpenAdmin={() => setAdminPanelOpen(true)}
           streakDays={streakDays}
           currentAudioCategory={activeAudioCategory}
           onToggleAudio={handleToggleAudio}
@@ -389,20 +410,6 @@ export default function App() {
           onSaveCompletedSession={handleSaveCompletedSession}
         />
       )}
-
-      {/* ADMIN PANEL MODAL */}
-      <AdminPanel
-        isOpen={adminPanelOpen}
-        onClose={() => setAdminPanelOpen(false)}
-        exams={exams}
-        onSaveExams={setExams}
-        vibes={vibes}
-        onSaveVibes={setVibes}
-        ambientTracks={ambientTracks}
-        onSaveAmbientTracks={setAmbientTracks}
-        quotes={quotes}
-        onSaveQuotes={setQuotes}
-      />
 
       {contentError && !contentLoading && (
         <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-[60] bg-slate-900 border border-amber-500/30 text-amber-300 text-xs rounded-xl p-3 shadow-2xl font-mono">

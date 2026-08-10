@@ -5,7 +5,6 @@ import {
   Clock, 
   Volume2, 
   VolumeX, 
-  ShieldCheck, 
   Compass, 
   Menu, 
   X,
@@ -18,7 +17,6 @@ interface NavbarProps {
   targetExam: Exam | null;
   onSelectTargetExam: (examId: string) => void;
   onOpenFocusRoom: () => void;
-  onOpenAdmin: () => void;
   streakDays: number;
   currentAudioCategory: AmbientCategory;
   onToggleAudio: () => void;
@@ -30,7 +28,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   targetExam,
   onSelectTargetExam,
   onOpenFocusRoom,
-  onOpenAdmin,
   streakDays,
   currentAudioCategory,
   onToggleAudio,
@@ -141,15 +138,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Compass className="w-3.5 h-3.5 fill-black text-black" />
             <span>FOCUS ROOM</span>
           </button>
-
-          {/* Admin Panel Button */}
-          <button
-            onClick={onOpenAdmin}
-            className="p-2 rounded-full glass text-slate-400 hover:text-white transition-all cursor-pointer"
-            title="Admin Control Panel"
-          >
-            <ShieldCheck className="w-4 h-4" />
-          </button>
         </div>
 
         {/* Mobile menu trigger */}
@@ -206,17 +194,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               {isAudioPlaying ? <Volume2 className="w-4 h-4 text-amber-400" /> : <VolumeX className="w-4 h-4" />}
               <span>{isAudioPlaying ? `AUDIO: ${currentAudioCategory.toUpperCase()}` : 'ENABLE AMBIENCE'}</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenAdmin();
-              }}
-              className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400"
-              title="Admin"
-            >
-              <ShieldCheck className="w-4 h-4" />
             </button>
           </div>
         </div>
